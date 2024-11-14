@@ -6,7 +6,7 @@ import android.os.Bundle
 class Quizec : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.quizec)
+        setContentView(R.layout.choose_page)
     }
 }
 
