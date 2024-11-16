@@ -11,7 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavHostController
@@ -71,61 +71,47 @@ fun InitialAnimation(navController: NavHostController) {
         animationSpec = tween(durationMillis = 1000), label = ""
     )
 
-    Column(
+    Box(
         modifier = Modifier
             .clickable {
                 startFadeOut = true
             }
-            .fillMaxSize()
-            .background(Color(0xFFADD8E6))
+
 
     ) {
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .background(Color(0xFFADD8E6))
                 .padding(30.dp)
         ) {
             Text(
                 text = "Welcome to QuiZec",
                 modifier = Modifier
-                    .align(Alignment.Center),
+                    .align(Alignment.CenterHorizontally),
                 style = MaterialTheme.typography.titleLarge,
 //                fontSize = 34.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.Black
             )
-        }
-        Spacer(modifier = Modifier.height(50.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFFADD8E6))
-                .padding(30.dp)
-        ) {
+            Spacer(modifier = Modifier.height(50.dp))
+
             Image(
                 painter = painterResource(id = R.drawable.quizec_logo_no_background),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .graphicsLayer(alpha = alpha)
-                    .align(Alignment.Center)
+                    .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
             )
-        }
 
-        Spacer(modifier = Modifier.height(150.dp))
+            Spacer(modifier = Modifier.height(150.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFFADD8E6))
-                .padding(30.dp)
-        ) {
             Text(
                 text = "your quiZ partner!",
                 modifier = Modifier
-                    .align(Alignment.Center),
+                    .align(Alignment.CenterHorizontally),
                 style = MaterialTheme.typography.titleLarge,
 //                fontSize = 34.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -142,11 +128,10 @@ fun InitialAnimation(navController: NavHostController) {
 }
 
 
-
-@Preview(showBackground = true)
-@Composable
-fun InitialLogoPreview() {
-    QuiZecJetpackTheme {
-        InitialLogo()
+    @Preview(showBackground = true)
+    @Composable
+    fun InitialLogoPreview() {
+        QuiZecJetpackTheme {
+            InitialLogo()
+        }
     }
-}
