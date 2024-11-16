@@ -25,9 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavHostController
 import pt.isec.a21130067.quizecjetpack.ui.theme.QuiZecJetpackTheme
 
-class InicialScreen : AppCompatActivity() {
+class InicialScreen(navController: NavHostController) : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
