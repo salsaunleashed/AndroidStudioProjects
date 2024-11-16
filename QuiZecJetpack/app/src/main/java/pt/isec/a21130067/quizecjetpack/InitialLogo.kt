@@ -3,6 +3,7 @@ package pt.isec.a21130067.quizecjetpack
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -88,6 +89,7 @@ fun InitialAnimation(navController: NavHostController) {
             Text(
                 text = "Welcome to QuiZec",
                 modifier = Modifier
+                    .graphicsLayer(alpha = alpha)
                     .align(Alignment.CenterHorizontally),
                 style = MaterialTheme.typography.titleLarge,
 //                fontSize = 34.sp,
@@ -111,6 +113,7 @@ fun InitialAnimation(navController: NavHostController) {
             Text(
                 text = "your quiZ partner!",
                 modifier = Modifier
+                    .graphicsLayer(alpha = alpha)
                     .align(Alignment.CenterHorizontally),
                 style = MaterialTheme.typography.titleLarge,
 //                fontSize = 34.sp,

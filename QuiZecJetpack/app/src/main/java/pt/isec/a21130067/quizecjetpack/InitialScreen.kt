@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import pt.isec.a21130067.quizecjetpack.ui.theme.QuiZecJetpackTheme
 
 class InicialScreen(navController: NavHostController) : AppCompatActivity() {
@@ -73,7 +74,9 @@ fun Greeting() {
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            Button(onClick = {},
+            Button(onClick = {
+
+            },
                 modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Text(text = "Creator")
             }
@@ -92,6 +95,7 @@ fun Greeting() {
 @Composable
 fun GreetingPreview() {
     QuiZecJetpackTheme {
+        val navController = rememberNavController()
         Greeting()
     }
 }
