@@ -108,7 +108,7 @@ fun InitialAnimation(navController: NavHostController) {
                     .fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(150.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
             Text(
                 text = "your quiZ partner!",
@@ -121,7 +121,7 @@ fun InitialAnimation(navController: NavHostController) {
                 color = Color.Black
             )
 
-            Spacer(modifier = Modifier.height(150.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
             Text(
                 text = "Click on screen continue",
