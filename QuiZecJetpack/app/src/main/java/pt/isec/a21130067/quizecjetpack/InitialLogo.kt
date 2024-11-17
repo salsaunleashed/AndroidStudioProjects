@@ -74,6 +74,7 @@ fun InitialAnimation(navController: NavHostController) {
 
     Box(
         modifier = Modifier
+            .fillMaxSize()
             .clickable {
                 startFadeOut = true
             }
@@ -120,8 +121,6 @@ fun InitialAnimation(navController: NavHostController) {
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.Black
             )
-
-            Spacer(modifier = Modifier.height(50.dp))
 
             Text(
                 text = "Click on screen continue",
