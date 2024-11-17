@@ -121,6 +121,18 @@ fun InitialAnimation(navController: NavHostController) {
                 color = Color.Black
             )
 
+            Spacer(modifier = Modifier.height(150.dp))
+
+            Text(
+                text = "Click on screen continue",
+                modifier = Modifier
+                    .graphicsLayer(alpha = alpha)
+                    .align(Alignment.CenterHorizontally),
+                style = MaterialTheme.typography.bodySmall,
+//                fontSize = 34.sp,
+                color = Color.Black
+            )
+
             if (startFadeOut && alpha == 0f) {
                 LaunchedEffect(Unit) {
                     navController.navigate("initial_screen")
