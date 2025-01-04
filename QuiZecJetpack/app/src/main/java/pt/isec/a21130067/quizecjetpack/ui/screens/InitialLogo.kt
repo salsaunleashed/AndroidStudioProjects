@@ -1,9 +1,9 @@
-package pt.isec.a21130067.quizecjetpack
+package pt.isec.a21130067.quizecjetpack.ui.screens
 
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -32,35 +32,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import pt.isec.a21130067.quizecjetpack.R
 import pt.isec.a21130067.quizecjetpack.ui.theme.QuiZecJetpackTheme
 
-class InitialLogoType(navController: NavHostController) : AppCompatActivity() {
+class InitialLogoType : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_inicial_screen)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        setContent {
+            QuiZecJetpackTheme {
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = "main_screen"
+                ) {
+                    composable("main_screen") { InitialAnimation(navController) }
+                    composable("register_login_screen") { RegisterAndLoginScreen(navController) }
+                }
+            }
         }
-    }
-}
-
-@Composable
-fun InitialLogo() {
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "main_screen") {
-        composable("main_screen") { InitialAnimation(navController) }
-        composable("initial_screen") { Greeting() }
     }
 }
 
@@ -134,7 +129,7 @@ fun InitialAnimation(navController: NavHostController) {
 
             if (startFadeOut && alpha == 0f) {
                 LaunchedEffect(Unit) {
-                    navController.navigate("initial_screen")
+                    navController.navigate("register_login_screen")
                 }
             }
         }
@@ -142,10 +137,18 @@ fun InitialAnimation(navController: NavHostController) {
 }
 
 
-    @Preview(showBackground = true)
-    @Composable
-    fun InitialLogoPreview() {
-        QuiZecJetpackTheme {
-            InitialLogo()
+@Preview(showBackground = true)
+@Composable
+fun InitialLogoPreview() {
+    QuiZecJetpackTheme {
+        val navController = rememberNavController()
+        NavHost(
+            navController = navController,
+            startDestination = "main_screen"
+        ) {
+            composable("main_screen") { InitialAnimation(navController) }
+            composable("register_login_screen") { RegisterAndLoginScreen(navController) }
+            composable("initial_screen") { Greeting(navController) }
         }
     }
+}

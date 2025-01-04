@@ -1,7 +1,8 @@
-package pt.isec.a21130067.quizecjetpack
+package pt.isec.a21130067.quizecjetpack.ui.screens
 
+import JoinScreen
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,27 +24,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import pt.isec.a21130067.quizecjetpack.R
 import pt.isec.a21130067.quizecjetpack.ui.theme.QuiZecJetpackTheme
 
-class InicialScreen(navController: NavHostController) : AppCompatActivity() {
+class InitialScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_inicial_screen)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContent {
+            QuiZecJetpackTheme {
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = "initial_screen"
+                ) {
+                    composable("initial_screen") { Greeting(navController) }
+                    composable("login_register_screen") { RegisterAndLoginScreen(navController) }
+                    composable("join_screen") { JoinScreen(navController) }
+                }
+
+            }
         }
     }
 }
 
+
 @Composable
-fun Greeting() {
+fun Greeting(navController: NavHostController) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -51,7 +61,7 @@ fun Greeting() {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFFADD8E6))
-                .padding(30.dp)
+                .padding(50.dp)
         ) {
             Text(
                 text = "QuiZec",
@@ -75,27 +85,39 @@ fun Greeting() {
             Spacer(modifier = Modifier.height(50.dp))
 
             Button(onClick = {
-
+                navController.navigate("join_screen")
             },
                 modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text(text = "Creator")
+                Text(text = "Create Quizz")
             }
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            Button(onClick = {},
+            Button(onClick = {
+                navController.navigate("join_screen")
+            },
                 modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text(text = "User")
+                Text(text = "Join Quizz")
+            }
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Button(onClick = {
+                navController.navigate("join_screen")
+            },
+                modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Text(text = "Recent Quizzes")
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     QuiZecJetpackTheme {
         val navController = rememberNavController()
-        Greeting()
+        Greeting(navController)
     }
 }
