@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.isec.a21130067.quizecjetpack.ui.screens.Greeting
+import pt.isec.a21130067.quizecjetpack.ui.screens.LobbyScreen
 import pt.isec.a21130067.quizecjetpack.ui.theme.QuiZecJetpackTheme
 
 class JoinQuizzScreen : AppCompatActivity() {
@@ -30,8 +31,12 @@ class JoinQuizzScreen : AppCompatActivity() {
                     navController = navController,
                     startDestination = "join_screen"
                 ) {
-                    composable("initial_screen") {
-                        Greeting(navController)
+                    composable("lobby_screen/{quizCode}"){ backStackEntry ->
+                        val quizCode = backStackEntry.arguments?.getString("quizCode") ?: ""
+                        LobbyScreen(navController, quizCode)
+                    }
+                    composable("join_screen") {
+                        JoinScreen(navController)
                     }
                 }
             }
@@ -71,16 +76,17 @@ fun JoinScreen(navController: NavHostController) {
         Button(
             onClick = {
                 if (quizCode.length == 6) {
-                    // Navega para a tela do quiz (substitua "quiz_screen" pela rota correta)
-                    navController.navigate("quiz_screen/$quizCode")
-                } else {
-                    // Mostre uma mensagem de erro (se necessário)
+                    navController.navigate("lobby_screen/$quizCode")
+                }
+                else{
+                    navController.navigate("lobby_screen/$quizCode")
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Join Quiz")
         }
+
     }
 }
 

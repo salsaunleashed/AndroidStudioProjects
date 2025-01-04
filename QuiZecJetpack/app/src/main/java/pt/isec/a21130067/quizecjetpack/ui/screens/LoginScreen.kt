@@ -1,5 +1,4 @@
 package pt.isec.a21130067.quizecjetpack.ui.screens
-
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
