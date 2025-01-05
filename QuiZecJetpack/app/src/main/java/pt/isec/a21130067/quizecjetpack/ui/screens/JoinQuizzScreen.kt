@@ -15,9 +15,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import pt.isec.a21130067.quizecjetpack.ui.screens.Greeting
+import com.google.firebase.auth.FirebaseAuth
 import pt.isec.a21130067.quizecjetpack.ui.screens.LobbyScreen
 import pt.isec.a21130067.quizecjetpack.ui.theme.QuiZecJetpackTheme
+import pt.isec.a21130067.quizecjetpack.utils.AuthManager.getCurrentUserEmail
+import pt.isec.a21130067.quizecjetpack.utils.FirestoreManager
+import pt.isec.a21130067.quizecjetpack.utils.FirestoreManager.addPlayerToLobby
 
 class JoinQuizzScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +36,7 @@ class JoinQuizzScreen : AppCompatActivity() {
                 ) {
                     composable("lobby_screen/{quizCode}"){ backStackEntry ->
                         val quizCode = backStackEntry.arguments?.getString("quizCode") ?: ""
-                        LobbyScreen(navController, quizCode)
+                        LobbyScreen(navController, quizCode, false)
                     }
                     composable("join_screen") {
                         JoinScreen(navController)
@@ -46,7 +49,8 @@ class JoinQuizzScreen : AppCompatActivity() {
 
 @Composable
 fun JoinScreen(navController: NavHostController) {
-    var quizCode by remember { mutableStateOf("") }
+    var quizCode by remember { mutableStateOf("")}
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -76,10 +80,19 @@ fun JoinScreen(navController: NavHostController) {
         Button(
             onClick = {
                 if (quizCode.length == 6) {
-                    navController.navigate("lobby_screen/$quizCode")
+                    val nome = FirebaseAuth.getInstance().currentUser?.email ?: "Player"
+                    addPlayerToLobby(quizCode, nome) { success, error ->
+                        if (success) {
+                            val isHost = false;
+                            navController.navigate("lobby_screen/$quizCode/$isHost")
+                        } else {
+                            errorMessage = error
+                        }
+                    }
+
                 }
                 else{
-                    navController.navigate("lobby_screen/$quizCode")
+                    errorMessage = "That quiz doesnt exist"
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -87,6 +100,13 @@ fun JoinScreen(navController: NavHostController) {
             Text("Join Quiz")
         }
 
+        errorMessage?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
     }
 }
 

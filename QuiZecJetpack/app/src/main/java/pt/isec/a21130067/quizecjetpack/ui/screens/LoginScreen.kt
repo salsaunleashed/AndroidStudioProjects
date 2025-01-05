@@ -37,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import pt.isec.a21130067.quizecjetpack.ui.theme.AzulClaro
 import pt.isec.a21130067.quizecjetpack.ui.theme.Azulbebe
 import pt.isec.a21130067.quizecjetpack.ui.theme.QuiZecJetpackTheme
+import pt.isec.a21130067.quizecjetpack.utils.AuthManager
 
 
 class RegisterAndLoginActivity : AppCompatActivity() {
@@ -76,90 +77,120 @@ class RegisterAndLoginActivity : AppCompatActivity() {
         }
     }
 
-    @Composable
-    fun RegisterAndLoginScreen(navController: NavHostController) {
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var confirmPassword by remember { mutableStateOf("") }
-        var isRegisterMode by remember { mutableStateOf(false) }
+@Composable
+fun RegisterAndLoginScreen(navController: NavHostController) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var isRegisterMode by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Azulbebe)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = if (isRegisterMode) "Register" else "Login",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1565C0),
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Azulbebe) // Use a cor Azulbebe definida
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = if (isRegisterMode) "Register" else "Login",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF1565C0),
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
 
-            TextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email") },
-                placeholder = { Text("Enter your email") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true
-            )
+        // Campo de email
+        TextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") },
+            placeholder = { Text("Enter your email") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            singleLine = true
+        )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") },
+            placeholder = { Text("Enter your password") },
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = PasswordVisualTransformation(),
+            singleLine = true
+        )
+
+        if (isRegisterMode) {
             Spacer(modifier = Modifier.height(16.dp))
-
             TextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") },
-                placeholder = { Text("Enter your password") },
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = { Text("Confirm Password") },
+                placeholder = { Text("Re-enter your password") },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true
             )
+        }
 
-            if (isRegisterMode) {
-                Spacer(modifier = Modifier.height(16.dp))
-                TextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = { Text("Confirm Password") },
-                    placeholder = { Text("Re-enter your password") },
-                    modifier = Modifier.fillMaxWidth(),
-                    visualTransformation = PasswordVisualTransformation(),
-                    singleLine = true
-                )
-            }
+        Spacer(modifier = Modifier.height(24.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = {
-                    if (!isRegisterMode) {
-                        navController.navigate("initial_screen")
+        Button(
+            onClick = {
+                if (email.isBlank() || password.isBlank() || (isRegisterMode && confirmPassword.isBlank())) {
+                    errorMessage = "All fields must be filled"
+                }else if (isRegisterMode) {
+                    if (password == confirmPassword) {
+                        AuthManager.registerUser(email, password) { success, error ->
+                            if (success) {
+                                navController.navigate("initial_screen")
+                            } else {
+                                errorMessage = error
+                            }
+                        }
                     } else {
-                        // Lógica de registo
+                        errorMessage = "Passwords do not match"
                     }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = if (isRegisterMode) "Register" else "Login")
-            }
+                } else {
+                    AuthManager.loginUser(email, password) { success, error ->
+                        if (success) {
+                            navController.navigate("initial_screen")
+                        } else {
+                            errorMessage = "Password or Email wrong, try again"
+                        }
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = if (isRegisterMode) "Register" else "Login")
+        }
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            TextButton(onClick = { isRegisterMode = !isRegisterMode }) {
-                Text(
-                    text = if (isRegisterMode)
-                        "Already have an account? Login"
-                    else
-                        "Don't have an account? Register",
-                    color = AzulClaro
-                )
-            }
+        TextButton(onClick = { isRegisterMode = !isRegisterMode }) {
+            Text(
+                text = if (isRegisterMode)
+                    "Already have an account? Login"
+                else
+                    "Don't have an account? Register",
+                color = AzulClaro
+            )
+        }
+
+        errorMessage?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 16.dp),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
+}
+
 

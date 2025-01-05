@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,7 +30,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.isec.a21130067.quizecjetpack.R
+import pt.isec.a21130067.quizecjetpack.ui.theme.AzulClaro
 import pt.isec.a21130067.quizecjetpack.ui.theme.QuiZecJetpackTheme
+import pt.isec.a21130067.quizecjetpack.ui.theme.Vermelho
+import pt.isec.a21130067.quizecjetpack.utils.AuthManager
 
 class InitialScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +48,7 @@ class InitialScreen : AppCompatActivity() {
                     composable("initial_screen") { Greeting(navController) }
                     composable("login_register_screen") { RegisterAndLoginScreen(navController) }
                     composable("join_screen") { JoinScreen(navController) }
+                    composable("create_quiz_screen") { CreateQuizScreen(navController)}
                 }
 
             }
@@ -85,7 +90,7 @@ fun Greeting(navController: NavHostController) {
             Spacer(modifier = Modifier.height(50.dp))
 
             Button(onClick = {
-                navController.navigate("join_screen")
+                navController.navigate("create_quiz_screen")
             },
                 modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Text(text = "Create Quizz")
@@ -107,6 +112,20 @@ fun Greeting(navController: NavHostController) {
             },
                 modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Text(text = "Recent Quizzes")
+            }
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Button(onClick = {
+                AuthManager.logoutUser()
+                navController.navigate("register_login_screen")
+            },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Vermelho,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Text(text = "Logout")
             }
         }
     }

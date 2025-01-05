@@ -17,9 +17,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.google.firebase.firestore.FirebaseFirestore
 import pt.isec.a21130067.quizecjetpack.ui.theme.Azulbebe
 import pt.isec.a21130067.quizecjetpack.ui.theme.QuiZecJetpackTheme
 
@@ -35,10 +38,18 @@ class Lobby : AppCompatActivity() {
                     navController = navController,
                     startDestination = "lobby_screen"
                 ) {
-                    composable("lobby_screen/{quizCode}"){ backStackEntry ->
-                        val quizCode = backStackEntry.arguments?.getString("quizCode") ?: ""
-                        LobbyScreen(navController, quizCode)
+                    composable(
+                        route = "lobby_screen/{quizId}/{isHost}",
+                        arguments = listOf(
+                            navArgument("quizId") { type = NavType.StringType },
+                            navArgument("isHost") { type = NavType.BoolType }
+                        )
+                    ) { backStackEntry ->
+                        val quizId = backStackEntry.arguments?.getString("quizId") ?: ""
+                        val isHost = backStackEntry.arguments?.getBoolean("isHost") ?: false
+                        LobbyScreen(navController, quizId, isHost)
                     }
+
                 }
             }
         }
@@ -46,14 +57,33 @@ class Lobby : AppCompatActivity() {
 }
 
 @Composable
-fun LobbyScreen(navController: NavHostController, quizCode: String) {
-    val players = remember { mutableStateListOf("Player1", "Player2", "Player3", "Player4") }
-    var isHost by remember { mutableStateOf(false) }
+fun LobbyScreen(navController: NavHostController, quizCode: String, isHost: Boolean) {
+    val players = remember { mutableStateListOf<String>() }
+    val errorMessage = remember { mutableStateOf<String?>(null) }
+
+    // Listener para atualizar jogadores em tempo real
+    LaunchedEffect(quizCode) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("quizzes")
+            .document(quizCode)
+            .collection("players")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    errorMessage.value = "Error loading players: ${e.message}"
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && !snapshot.isEmpty) {
+                    players.clear()
+                    players.addAll(snapshot.documents.mapNotNull { it.getString("name") })
+                }
+            }
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Azulbebe) // Fundo estilizado
+            .background(Color(0xFFADD8E6))
             .padding(16.dp)
     ) {
         Column(
@@ -61,7 +91,6 @@ fun LobbyScreen(navController: NavHostController, quizCode: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Título
             Text(
                 text = "QUIZ LOBBY",
                 style = MaterialTheme.typography.titleLarge.copy(
@@ -73,7 +102,6 @@ fun LobbyScreen(navController: NavHostController, quizCode: String) {
                 textAlign = TextAlign.Center
             )
 
-            // Código do Quiz
             Text(
                 text = "Quiz Code: $quizCode",
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp),
@@ -82,7 +110,6 @@ fun LobbyScreen(navController: NavHostController, quizCode: String) {
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // Lista de Jogadores
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,7 +139,6 @@ fun LobbyScreen(navController: NavHostController, quizCode: String) {
             if (isHost) {
                 Button(
                     onClick = {
-                        // Navegar para a tela do quiz
                         navController.navigate("quiz_screen/$quizCode")
                     },
                     modifier = Modifier
@@ -131,6 +157,15 @@ fun LobbyScreen(navController: NavHostController, quizCode: String) {
                 )
             }
         }
+
+        errorMessage.value?.let {
+            Text(
+                text = it,
+                color = Color.Red,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
     }
 }
+
 

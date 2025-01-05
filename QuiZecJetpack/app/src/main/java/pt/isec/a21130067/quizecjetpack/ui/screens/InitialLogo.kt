@@ -52,7 +52,7 @@ class InitialLogoType : AppCompatActivity() {
                     startDestination = "main_screen"
                 ) {
                     composable("main_screen") { InitialAnimation(navController) }
-                    composable("register_login_screen") { RegisterAndLoginScreen(navController) }
+                        composable("register_login_screen") { RegisterAndLoginScreen(navController) }
                 }
             }
         }
